@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mo_calculation,access.mo.calculation,model_mo_calculation,base.group_user,1,1,1,1
+
+access_mo_calculation_wizard,mo.calculation.wizard,model_mo_calculation_wizard,base.group_user,1,1,1,1
+access_mo_calculation_wizard_line,mo.calculation.wizard.line,model_mo_calculation_wizard_line,base.group_user,1,1,1,1

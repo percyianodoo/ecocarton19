@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+   
+    <template id="invoice_report_inherit"
+            inherit_id="account.report_invoice_document">
+            <xpath expr="//table[@name='invoice_line_table']/thead/tr/th[1]" position="after">
+                <th>Product Code</th>
+            </xpath>
+            <xpath expr="//table[@name='invoice_line_table']/tbody//tr//td[1]" position="after">              
+                    <td ><span t-field="line.product_code_ids" style ="margin-left:40px;"/>
+                    </td>
+            </xpath>
+    </template>
+
+    <template id="bi_sale_order_report_document" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//table//tbody//tr//td[1]" position="after">
+            <td >
+                <span t-field="line.product" style ="margin-left:40px;"/>
+            </td>
+        </xpath>
+        <xpath expr="//table/thead/tr/th[1]" position="after">
+            <th>Product Code</th>
+        </xpath>
+    </template>
+
+    </data>
+</odoo>

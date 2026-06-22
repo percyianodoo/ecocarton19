@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+
+    <!-- view common to both template and product -->
+    <record id="view_template_property_form_custom_inherit" model="ir.ui.view">
+        <field name="name">product.template.stock.property.form.custom.inherit</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='categ_id']" position="after">
+
+                <field name="formula"/>
+
+            </xpath>
+        </field>
+    </record>
+
+
+    <record id="view_order_form_inherit_mo_calc" model="ir.ui.view">
+        <field name="name">sale.order.form.mo.calc.button</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/header/button[@name='action_confirm'][2]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/header/button[@name='action_confirm'][1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//form/header/button[@name='action_confirm'][1]" position="after">
+                <button name="custom_action_so_confirm"
+                        string="Confirm SO"
+                        type="object"
+                        class="btn-primary"
+                        invisible="state in ['confirmed','sale']"/>
+            </xpath>
+            <xpath expr="//form/header/field[@name='state']" position="replace">
+
+                <field name="state" widget="statusbar" statusbar_visible="draft,sent,confirmed,sale"/>
+
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" name="action_view_mo_calculations" type="object" icon="fa-wrench"
+                        invisible="not mo_calc_ids">
+                    <div class="o_field_widget o_stat_info">
+                        <!--                        <span class="o_stat_value"><field name="mrp_production_count"/></span>-->
+                        <span class="o_stat_text">MO Calculations</span>
+                    </div>
+                </button>
+            </xpath>
+            <header position="inside">
+                <button name="action_generate_mo_calculations"
+                        string="Generate MO Calculations"
+                        type="object"
+                        class="btn-primary"
+                        invisible="state !='confirmed' or mo_calc_ids or not display_mo_calculation_button"/>
+            </header>
+        </field>
+    </record>
+
+    <record id="action_mo_calculation" model="ir.actions.act_window">
+        <field name="name">MO Calculations</field>
+        <field name="res_model">mo.calculation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

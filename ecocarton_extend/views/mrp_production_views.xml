@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="mrp_production_form_ecocarton"
+            model="ir.ui.view">
+
+        <field name="name">mrp.production.form.ecocarton</field>
+        <field name="model">mrp.production</field>
+        <field name="inherit_id"
+               ref="mrp.mrp_production_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_open_transfer_wizard"
+                        string="Create Transfer"
+                        type="object"
+                        class="btn-primary"/>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button name="action_view_transfers"
+                        type="object"
+                        class="oe_stat_button"
+                        invisible="transfer_count == 0"
+                        icon="fa-exchange">
+                    <field name="transfer_count"
+                           widget="statinfo"
+                           string="Custom Transfers"/>
+                </button>
+
+            </xpath>
+
+        </field>
+
+    </record>
+
+</odoo>

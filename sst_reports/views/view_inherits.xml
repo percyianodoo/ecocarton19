@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="inherit_view_tax_sst" model="ir.ui.view">
+		<field name="name">inherit.view.tax.form</field>
+		<field name="model">account.tax</field>
+		<field name="inherit_id" ref="account.view_tax_form"/>
+		<field name="arch" type="xml">
+            <xpath expr ="//page[2]" position="after">
+                <page name="gst_tax_details" string="SST TAX">
+                    <group>
+                        <field name="tax_code_id"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="inherit_view_compnay_sst" model="ir.ui.view">
+		<field name="name">inherit.view.company.form</field>
+		<field name="model">res.company</field>
+		<field name="inherit_id" ref="base.view_company_form"/>
+		<field name="arch" type="xml">
+            <xpath expr ="//field[@name='currency_id']" position="before">
+                <field name ="sst_number"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="account_tax_code_list" model="ir.ui.view">
+		<field name="name">account.tax.code.list</field>
+		<field name="model">account.tax.code</field>
+		<field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="des"/>
+            </list>
+        </field>
+    </record>
+
+
+</odoo>

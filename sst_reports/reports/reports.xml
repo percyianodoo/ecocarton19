@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+<!--        <report-->
+<!--            id="sst_reports.action_report_account_sst"-->
+<!--            string="SST REPORT"-->
+<!--            model="sst.cal"-->
+<!--            report_type="qweb-pdf"-->
+<!--            file="sst_reports.report_sst"-->
+<!--            name="sst_reports.report_sst"-->
+<!--            paperformat="sst_reports.paperformat_sst"-->
+<!--            menu="False"-->
+<!--        />-->
+
+        <record id="sst_reports.action_report_account_sst" model="ir.actions.report">
+            <field name="name">SST REPORT</field>
+            <field name="model">sst.cal</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">sst_reports.report_sst</field>
+            <field name="report_file">sst_reports.report_sst</field>
+            <field name="paperformat_id" ref="sst_reports.paperformat_sst"/>
+            <field name="binding_type">report</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Sale Order Form View -->
+    <record id="view_order_form_inherit_invoice_delivery" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.invoice.delivery</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Place invoice and delivery address after partner_id -->
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="partner_invoice_id" placeholder="Invoice Address"/>
+                <field name="partner_shipping_id" placeholder="Delivery Address"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

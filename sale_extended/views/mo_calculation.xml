@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<odoo>
+    <record id="view_mo_calculation_tree" model="ir.ui.view">
+        <field name="name">mo.calculation.tree</field>
+        <field name="model">mo.calculation</field>
+        <field name="arch" type="xml">
+            <list string="MO Calculations">
+                <field name="sale_id"/>
+                <field name="sale_line_id"/>
+                <field name="x_studio_raw_material"/>
+                <field name="x_studio_batch"/>
+                <field name="x_studio_roll_kg"/>
+                <field name="x_studio_gsm"/>
+                <field name="x_studio_pe"/>
+                <field name="x_studio_no_of_cups"/>
+                <field name="x_studio_no_of_sheets"/>
+                <field name="x_studio_wastage"/>
+                <field name="x_studio_sheet_convert_to_pcs"/>
+                <!--                <field name="production_id"/>-->
+            </list>
+        </field>
+    </record>
+
+    <record id="view_mo_calculation_form" model="ir.ui.view">
+        <field name="name">mo.calculation.form</field>
+        <field name="model">mo.calculation</field>
+        <field name="arch" type="xml">
+            <form string="MO Calculation">
+                <header>
+                    <button name="action_generate_mo" string="Generate MO"
+                            type="object" class="btn-primary"
+                            invisible="is_mo_created"/>
+                    <button name="action_open_wizard"
+                            type="object"
+                            string="MO Calculation Wizard"
+                            class="oe_highlight"
+                            invisible="not is_mo_created"
+                    />
+
+                </header>
+                <sheet>
+                    <group>
+                        <field name="sale_id" readonly="1"/>
+                        <field name="sale_line_id" readonly="1"/>
+                        <field name="bom_id" readonly="is_mo_created" required="1"/>
+                    </group>
+                    <notebook>
+                        <page string="MO Calculation">
+                            <group>
+                                <group string="Paper info &amp; calculation">
+                                    <field name="x_studio_raw_material"/>
+                                    <field name="x_studio_batch"/>
+                                    <field name="x_studio_gsm"/>
+                                    <field name="x_studio_pe"/>
+                                    <field name="x_studio_roll_width_mm"/>
+                                    <field name="x_studio_no_of_cups"/>
+                                    <field name="x_studio_no_of_sheets"/>
+                                    <field name="x_studio_wastage_calculation"/>
+                                    <field name="x_studio_plain_job"/>
+                                    <field name="x_studio_kg_for_total_no_of_sheets"/>
+                                </group>
+                                <group>
+                                <group string="Die board info">
+                                    <field name="x_studio_pcs_cut_per_sheet"/>
+                                    <field name="x_studio_length"/>
+                                    <field name="x_studio_test_paper"/>
+                                </group>
+                                <!--                                <group>-->
+                                <group string="KG to pcs calculation">
+                                    <field name="x_studio_roll_kg"/>
+                                    <field name="x_studio_wastage"/>
+                                    <field name="x_studio_sheet_convert_to_pcs"/>
+                                </group>
+                                    </group>
+                            </group>
+                            <!--                            </group>-->
+                            <group>
+                                <!--                                <field name="production_id"/>-->
+
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

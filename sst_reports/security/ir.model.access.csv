@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_sst_cal,partner.sst.cal,model_sst_cal,,1,1,1,1
+access_sst_service,access.sst.service,model_sst_service_details,,1,1,1,1
+access_sst_payable_goods,access.sst.payable.goods,model_sst_payable_goods,,1,1,1,1
+access_sst_tax_code,access.sst.tax.code,model_account_tax_code,,1,1,1,1

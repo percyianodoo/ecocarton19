@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="view_ecocarton_transfer_wizard_form"
+            model="ir.ui.view">
+        <field name="name">ecocarton.transfer.wizard.form</field>
+        <field name="model">ecocarton.transfer.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Create Transfer">
+                <group>
+                    <field name="transfer_type"/>
+                    <field name="packing_qty"
+                           invisible="transfer_type != 'packing'"/>
+                    <field name="source_location_id"/>
+                    <field name="destination_location_id"/>
+                </group>
+                <footer>
+                    <button name="action_create_transfer"
+                            string="Create"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Cancel"
+                            special="cancel"/>
+
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

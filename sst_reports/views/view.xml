@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="sst_view_form" model="ir.ui.view">
+        <field name="name">sst_view_form</field>
+            <field name="model">sst.cal</field>
+            <field name="arch" type="xml">
+                <form string="SST ">
+                    <header>
+                        <button name="process" class="oe_highlight" string="Process" type="object" invisible = "state != 'draft'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,process"/>
+                    </header>
+                    <sheet>
+                        <h1 class="mt0">
+                            <field name="name"/>
+                        </h1>
+                        <group>
+                            <field name="from_date"/>
+                            <field name="to_date"/>
+                            <button name="generate_values" id="genrate_values" type="object" string="GENERATE" invisible = "state in ['process']"/>
+                            <button name="clear" id="clear" type="object" string="CLEAR" invisible = "state in ['process']"/>
+                            <button name="print_sst" type="object" string="PRINT SST-02" invisible = "state in ['draft']" />
+
+                        </group>
+                        <notebook>
+                            <page name="part_a" string="PART A">
+                                <group>
+                                    <field name="company_id"/>
+                                    <field name="due_date"/>
+                                </group>
+                            </page>
+                            <page name="part_b" string="PART B">
+                                <h6>PART B1:SALES / SERVICE DETAILS</h6>
+                                <field name="sst_service_ids">
+                                    <list  create="false">
+<!--                                       todo editable="false"-->
+                                        <field name="number"/>
+                                        <field name="description"/>
+                                        <field name="tariff_code"/>
+                                        <field name="subtotal"/>
+                                        <field name="free_service"/>
+                                        <field name="total"/>
+                                    </list>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right" colspan="2" name="sale_total">
+<!--                                    <field name="service_total"/>-->
+                                    <field name="service_net_total"/>
+                                </group>
+                                <br/>
+                                <br/>
+
+                                <h6>PART B2:VALUE OF TAX PAYABLE FOR GOODS (SALES/ DISPOSED/ OWN USE) /
+SERVICES (SERVICES PERFORMED / OWN USE)</h6>
+                                <field name="sst_payable_ids">
+                                    <list  create="false">
+<!--                                      todo  editable="false"-->
+                                        <field name="label"/>
+                                        <field name="value_taxable_sales_amt"/>
+                                        <field name="tax_rate"/>
+                                        <field name="tax_payable_amt"/>
+                                    </list>
+                                </field>
+                                <group>
+                                    <field name="total_value_tax_payable_amt"/>
+                                    <h4>AMOUNT OF TAX DEDUCTED</h4>
+                                    <field name="credit_note_tax"/>
+                                    <field name="total_tax_exclude_pen_amt"/>
+                                    <field name="penalty_rate"/>
+                                    <field name="penalty_amount"/>
+                                    <field name="total_tax_include_pen_amt"/>
+                                </group>
+                            </page>
+                            <page name="part_c" string="PART C"></page>
+                            <page name="part_d_e" string="PART D AND E">
+                                <group>
+                                    <field name="field_18_a"/>
+                                    <field name="field_18_b_1"/>
+                                    <field name="field_18_b_2"/>
+                                    <field name="field_18_b_3_1"/>
+                                    <field name="field_18_b_3_2"/>
+                                    <field name="field_18_b_3_3"/>
+                                    <field name="field_18_c"/>
+
+
+                                <br/>
+                                    <field name="field_19"/>
+                                    <field name="field_20"/>
+                                    <field name="field_21"/>
+                                </group>
+
+                            </page>
+
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+    </record>
+    <record id="sst_tree_view" model="ir.ui.view">
+            <field name="name">sst.view.list</field>
+            <field name="model">sst.cal</field>
+            <field name="arch" type="xml">
+                <list string="Codes">
+                      <field name="name" />
+                      <field name="state" string="Status" />
+                </list>
+            </field>
+        </record>
+
+
+        <!--Action for Repair Logistics Wizard -->
+        <record id="sst_view_action" model="ir.actions.act_window">
+            <field name="name">SST </field>
+            <field name="res_model">sst.cal</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    <menuitem id="account_sst_menu" name="SST-02 Reports" parent="account.menu_finance_reports" sequence="3"/>
+    <menuitem id="account_sst_report_menu" name="SST Report" action="sst_view_action"
+              parent="account_sst_menu"/></odoo>

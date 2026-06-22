@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+     <record id="1" model="account.tax.code">
+            <field name="name">S-10</field>
+            <field name="des">Sales Tax 10%</field>
+     </record>
+    <record id="2" model="account.tax.code">
+            <field name="name">S-5</field>
+            <field name="des">Sales Tax 5%</field>
+     </record>
+    <record id="3" model="account.tax.code">
+            <field name="name">SV-6</field>
+            <field name="des">Service Tax 6%</field>
+     </record>
+    <record id="4" model="account.tax.code">
+            <field name="name">SW-10</field>
+            <field name="des">Sales Tax for Work Performed 10%</field>
+     </record>
+    <record id="5" model="account.tax.code">
+            <field name="name">SW-5</field>
+            <field name="des">Sales Tax for Work Performed 5%</field>
+
+     </record>
+    <record id="6" model="account.tax.code">
+            <field name="name">SU-10</field>
+            <field name="des">Sales Tax 10% for Own Used or Disposed</field>
+     </record>
+    <record id="7" model="account.tax.code">
+            <field name="name">SU-5</field>
+            <field name="des">Sales Tax 5% for Own Used or Disposed</field>
+     </record>
+    <record id="8" model="account.tax.code">
+            <field name="name">SVU-6</field>
+            <field name="des">Service Tax 6% for Own Used or Disposed</field>
+     </record>
+    <record id="9" model="account.tax.code">
+            <field name="name">SVI-6</field>
+            <field name="des">Service Tax 6% for Imported Service</field>
+     </record>
+    <record id="10" model="account.tax.code">
+        <field name="name">S-0</field>
+        <field name="des">Sales Tax 0%</field>
+     </record>
+    <record id="11" model="account.tax.code">
+            <field name="name">SV-0</field>
+            <field name="des">Service Tax 0%</field>
+     </record>
+    <record id="12" model="account.tax.code">
+            <field name="name">EEM</field>
+            <field name="des">Sales to Export Market</field>
+     </record>
+    <record id="13" model="account.tax.code">
+            <field name="name">ESP</field>
+            <field name="des">Sales to Special Area</field>
+     </record>
+    <record id="14" model="account.tax.code">
+            <field name="name">EDA</field>
+            <field name="des">Sales to Designated Area
+            </field>
+     </record>
+     <record id="15" model="account.tax.code">
+            <field name="name">ESA</field>
+            <field name="des">Exemption Schedule A
+            </field>
+     </record>
+    <record id="16" model="account.tax.code">
+            <field name="name">ESB</field>
+            <field name="des">Exemption Schedule B</field>
+     </record>
+     <record id="17" model="account.tax.code">
+            <field name="name">ESC-A</field>
+            <field name="des">Exemption Schedule C Item 1 and 2</field>
+     </record>
+     <record id="18" model="account.tax.code">
+            <field name="name">ESC-B</field>
+            <field name="des">Exemption Schedule C Item 3 and 4</field>
+     </record>
+    <record id="19" model="account.tax.code">
+            <field name="name">ESC-C</field>
+            <field name="des">Exemption Schedule C Item 5</field>
+     </record>
+    <record id="20" model="account.tax.code">
+            <field name="name">ESV-6</field>
+            <field name="des">Exemption Service Tax</field>
+     </record>
+    <record id="21" model="account.tax.code">
+            <field name="name">P-10</field>
+            <field name="des">Purchase Tax 10%</field>
+     </record>
+    <record id="22" model="account.tax.code">
+            <field name="name">P-5
+            </field>
+            <field name="des">Purchase Tax 5%</field>
+     </record>
+    <record id="23" model="account.tax.code">
+            <field name="name">PS-6
+            </field>
+            <field name="des">Purchase Service Tax 6%</field>
+     </record>
+    <record id="24" model="account.tax.code">
+            <field name="name">SD-4
+            </field>
+            <field name="des">Sales Tax Deduction 4%</field>
+     </record>
+    <record id="25" model="account.tax.code">
+            <field name="name">SD-2
+            </field>
+            <field name="des">Sales Tax Deduction 2%</field>
+     </record>
+    <record id="26" model="account.tax.code">
+            <field name="name">DS-6
+            </field>
+            <field name="des">Digital Service Tax 6% Claimable</field>
+     </record>
+    <record id="27" model="account.tax.code">
+            <field name="name">DSN-6</field>
+            <field name="des">Digital Service Tax 6% not Claimable</field>
+     </record>
+    <record id="28" model="account.tax.code">
+            <field name="name">IMSV-6</field>
+            <field name="des">Purchase Imported Services from supplier</field>
+     </record>
+     <record id="29" model="account.tax.code">
+            <field name="name">EPC-A</field>
+            <field name="des">Exemption Purchase Schedule C Item 1 and 2</field>
+     </record>
+     <record id="30" model="account.tax.code">
+            <field name="name">EPC-B</field>
+            <field name="des">Exemption Purchase Schedule C Item 3 and 4</field>
+     </record>
+     <record id="31" model="account.tax.code">
+            <field name="name">EPC-C</field>
+            <field name="des">Exemption Purchase Schedule C Item 5</field>
+     </record>
+
+
+</odoo>
