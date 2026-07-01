@@ -100,7 +100,8 @@ class SaleOrder(models.Model):
                     })
                     order.mo_calc_ids = mo_cal_ids
 
-    @api.depends('procurement_group_id.stock_move_ids.created_production_id.procurement_group_id.mrp_production_ids')
+    # procurement_group_id.stock_move_ids.created_production_id.procurement_group_id !TODO curency commented gettings errors ya
+    @api.depends('mrp_production_ids')
     def _compute_mrp_production_ids(self):
         super()._compute_mrp_production_ids()  # Call Odoo's original logic first
 
