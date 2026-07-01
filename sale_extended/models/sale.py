@@ -143,7 +143,8 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    @api.depends('is_storable', 'product_uom_qty', 'qty_delivered', 'state', 'move_ids', 'product_uom')
+    # 'product_uom' !TODO currently commenteds ya gettinges errors ya
+    @api.depends('is_storable', 'product_uom_qty', 'qty_delivered', 'state', 'move_ids')
     def _compute_qty_to_deliver(self):
         """Compute the visibility of the inventory widget."""
         for line in self:
