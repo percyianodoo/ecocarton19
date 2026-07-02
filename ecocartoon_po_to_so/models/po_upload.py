@@ -26,7 +26,7 @@ class PortalPoUpload(models.Model):
         string='Related Sale Order',
     )
     raw_payload = fields.Text(string="Raw Payload Data")
-    # remark = fields.Char(string="Remarks")
+    remark = fields.Char(string="Remarks")
 
     def send_to_analyze_invoice(self, file):
         url = 'http://18.142.239.133:8765/pdf2json'
@@ -50,7 +50,6 @@ class PortalPoUpload(models.Model):
             response = requests.post(url, files=files)
             if response.status_code ==200:
                 data = response.json()
-                _logger.info(f"JSON AI Data response for the files ==>{file.name}")
                 partner_name = data.get('Company').get('Name')
                 partner_id = self.env['res.partner'].sudo().search([('name', '=',partner_name)],limit=1)
                 # if not partner_id:

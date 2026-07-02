@@ -1,9 +1,18 @@
-from odoo import api, models
-from collections import defaultdict
-from odoo.tools import float_round
+# -*- coding: utf-8 -*-
+
+from collections import defaultdict, OrderedDict
+from datetime import date, datetime, time, timedelta
+import json
+
+from odoo import api, fields, models, _
+from odoo.tools import float_compare, float_round, format_date, float_is_zero, float_repr
+from odoo.exceptions import UserError
+
 
 class ReportBomStructure(models.AbstractModel):
     _inherit = "report.mrp.report_bom_structure"
+
+
 
     @api.model
     def _get_bom_data(self, bom, warehouse, product=False, line_qty=False, bom_line=False, level=0, parent_bom=False, parent_product=False, index=0, product_info=False, ignore_stock=False, simulated_leaves_per_workcenter=False):
@@ -27,17 +36,14 @@ class ReportBomStructure(models.AbstractModel):
         if bom_line:
             current_quantity = bom_line.product_uom_id._compute_quantity(line_qty, bom.product_uom_id) or 0
 
-        prod_cost = 0
         has_attachments = False
         if not is_minimized:
             if product:
-                prod_cost = product.uom_id._compute_price(product.with_company(company).standard_price, bom.product_uom_id) * current_quantity
                 has_attachments = self.env['product.document'].search_count(['&', '&', ('attached_on_mrp', '=', 'bom'), ('active', '=', 't'), '|', '&', ('res_model', '=', 'product.product'),
                                                                  ('res_id', '=', product.id), '&', ('res_model', '=', 'product.template'),
                                                                  ('res_id', '=', product.product_tmpl_id.id)], limit=1) > 0
             else:
                 # Use the product template instead of the variant
-                prod_cost = bom.product_tmpl_id.uom_id._compute_price(bom.product_tmpl_id.with_company(company).standard_price, bom.product_uom_id) * current_quantity
                 has_attachments = self.env['product.document'].search_count(['&', '&', ('attached_on_mrp', '=', 'bom'), ('active', '=', 't'),
                                                                     '&', ('res_model', '=', 'product.template'), ('res_id', '=', bom.product_tmpl_id.id)], limit=1) > 0
 
@@ -57,9 +63,11 @@ class ReportBomStructure(models.AbstractModel):
             'bom_id': bom and bom.id or False,
             'bom_code': bom and bom.code or False,
             'type': 'bom',
+            'is_storable': product.is_storable,
             'quantity': current_quantity,
             'quantity_available': quantities_info.get('free_qty') or 0,
             'quantity_on_hand': quantities_info.get('on_hand_qty') or 0,
+            'quantity_forecasted': quantities_info.get('forecasted_qty') or 0,
             'free_to_manufacture_qty': quantities_info.get('free_to_manufacture_qty') or 0,
             'base_bom_line_qty': bom_line.product_qty if bom_line else False,  # bom_line isn't defined only for the top-level product
             'name': product.display_name or bom.product_tmpl_id.display_name,
@@ -77,7 +85,6 @@ class ReportBomStructure(models.AbstractModel):
             'link_id': (product.id if product.product_variant_count > 1 else product.product_tmpl_id.id) or bom.product_tmpl_id.id,
             'link_model': 'product.product' if product.product_variant_count > 1 else 'product.template',
             'code': bom and bom.display_name or '',
-            'prod_cost': prod_cost,
             'bom_cost': 0,
             'level': level or 0,
             'has_attachments': has_attachments,
@@ -108,6 +115,7 @@ class ReportBomStructure(models.AbstractModel):
 
             # custom code end
 
+
             line_quantities[line.id] = line_quantity
             if not line.child_bom_id:
                 no_bom_lines |= line
@@ -135,6 +143,12 @@ class ReportBomStructure(models.AbstractModel):
             else:
                 components.append(component)
             bom_report_line['bom_cost'] += component['bom_cost']
+        for component in components:
+            if component['is_storable']:
+                if missing_qty := max(component['quantity'] - component['quantity_forecasted'], 0):
+                    missing_qty = float_repr(missing_qty, self.env['decimal.precision'].precision_get('Product Unit'))
+                    route_name = component['route_name'] or _('Order')
+                    component['status'] = _("%(qty)s To %(route)s", qty=missing_qty, route=route_name)
         bom_report_line['components'] = components
         bom_report_line['producible_qty'] = self._compute_current_production_capacity(bom_report_line)
 
@@ -144,9 +158,19 @@ class ReportBomStructure(models.AbstractModel):
         bom_report_line['manufacture_delay'] = route_info.get('manufacture_delay', False)
         bom_report_line.update(availabilities)
 
+        if level == 0:
+            if bom_report_line['producible_qty'] > 0:
+                bom_report_line['status'] = _("%(qty)s Ready To Produce", qty=bom_report_line['producible_qty'])
+            else:
+                bom_report_line['status'] = _("No Ready To Produce")
+        elif missing_qty := max(bom_report_line['quantity'] - bom_report_line['quantity_available'], 0):
+            missing_qty = float_repr(missing_qty, self.env['decimal.precision'].precision_get('Product Unit'))
+            route_name = bom_report_line['route_name'] or _('Order')
+            bom_report_line['status'] = _("%(qty)s To %(route)s", qty=missing_qty, route=route_name)
+
         if not is_minimized:
 
-            operations = self._get_operation_line(product, bom, float_round(current_quantity, precision_rounding=1, rounding_method='UP'), level + 1, index, bom_report_line, simulated_leaves_per_workcenter)
+            operations = self._get_operation_line(product, bom, float_round(current_quantity, precision_digits=self.env['decimal.precision'].precision_get('Product Unit'), rounding_method='UP'), level + 1, index, bom_report_line, simulated_leaves_per_workcenter)
             bom_report_line['operations'] = operations
             bom_report_line['operations_cost'] = sum(op['bom_cost'] for op in operations)
             bom_report_line['operations_time'] = sum(op['quantity'] for op in operations)
@@ -164,6 +188,8 @@ class ReportBomStructure(models.AbstractModel):
             bom_report_line['byproducts_cost'] = sum(byproduct['bom_cost'] for byproduct in byproducts)
             bom_report_line['byproducts_total'] = sum(byproduct['quantity'] for byproduct in byproducts)
             bom_report_line['bom_cost'] *= bom_report_line['cost_share']
+
+        bom_report_line['foldable'] = len(bom.operation_ids) > 0 or (len(bom_report_line['components']) > 0 and level > 0) or any(component.get('foldable', False) for component in bom_report_line['components'])
 
         if level == 0:
             # Gives a unique key for the first line that indicates if product is ready for production right now.

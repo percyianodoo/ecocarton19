@@ -76,18 +76,22 @@ class MoCalculation(models.Model):
             self.x_studio_length = self.bom_id.length
 
     def action_generate_mo(self):
-        context = self.env.context.copy()
-        context.update({'selected_so_line_id': self.sale_line_id.id})
-        context.update({'bom_id': self.bom_id.id})
-        self.env.context = context
-        # self.sale_line_id.state = 'draft'
-        self.sale_id.state = 'draft'
-        before_mos = self.sale_id.mrp_production_ids
+        context = dict(self.env.context)
+        context.update({
+            'selected_so_line_id': self.sale_line_id.id,
+            'bom_id': self.bom_id.id,
+        })
 
-        self.sale_id.action_confirm()
+        sale = self.sale_id.with_context(context)
+
+        sale.state = 'draft'
+        before_mos = sale.mrp_production_ids
+
+        sale.action_confirm()
+
         self.is_mo_created = True
 
-        after_mos = self.sale_id.mrp_production_ids
+        after_mos = sale.mrp_production_ids
 
         is_remaining_mo_generation = self.search([('sale_id','=',self.sale_id.id),('is_mo_created','=',False)],limit=1)
         if is_remaining_mo_generation:

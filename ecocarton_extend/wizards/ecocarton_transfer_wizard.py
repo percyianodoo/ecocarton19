@@ -67,7 +67,7 @@ class EcocartonTransferWizard(models.TransientModel):
                 lambda m: m.product_uom_qty > 0):
 
             move_lines.append((0, 0, {
-                'name': move.product_id.display_name,
+                # 'name': move.product_id.display_name,
                 'product_id': move.product_id.id,
                 'product_uom_qty': move.product_uom_qty,
                 'product_uom': move.product_uom.id,
@@ -82,7 +82,7 @@ class EcocartonTransferWizard(models.TransientModel):
             'location_id': self.source_location_id.id,
             'location_dest_id': self.destination_location_id.id,
             'origin': production.name,
-            'move_ids_without_package': move_lines,
+            'move_ids': move_lines,
         })
         picking.action_confirm()
         picking.message_post(
@@ -122,8 +122,8 @@ class EcocartonTransferWizard(models.TransientModel):
             'location_id': self.source_location_id.id,
             'location_dest_id': self.destination_location_id.id,
             'origin': production.name,
-            'move_ids_without_package': [(0, 0, {
-                'name': production.product_id.display_name,
+            'move_ids': [(0, 0, {
+                # 'name': production.product_id.display_name,
                 'product_id': production.product_id.id,
                 'product_uom_qty': self.packing_qty,
                 'product_uom': production.product_uom_id.id,

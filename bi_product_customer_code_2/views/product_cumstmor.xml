@@ -13,16 +13,16 @@
                 <xpath expr="//notebook" position="inside">
                     <page name="name" string="Customer Code" invisible="not product_customer_code">
                         <field name="product_customer_code_ids" nolabel="1" colspan="4" widget="one2many_list"
-                                context="{'default_product_tmpl_id': id}">
+                               context="{'default_product_tmpl_id': id}">
                             <list string="Product Customer Code" editable="bottom">
                                 <field name="product_id"
-                                    domain="[('product_tmpl_id', '=?', context.get('default_product_tmpl_id', False))]"/>
+                                       domain="[('product_tmpl_id', '=?', context.get('default_product_tmpl_id', False))]"/>
                                 <field name="product_code"/>
                                 <field name="name_id"/>
                             </list>
                             <form string="Product Customer Code" version="7.0">
                                 <field name="product_id" readonly="1"
-                                    domain="[('product_tmpl_id', '=?', context.get('default_product_tmpl_id', False))]"/>
+                                       domain="[('product_tmpl_id', '=?', context.get('default_product_tmpl_id', False))]"/>
                                 <field name="product_code"/>
                                 <field name="name_id"/>
                             </form>
@@ -40,7 +40,7 @@
                 <form string="Product Customer Code" version="7.0">
                     <field name="product_code"/>
                     <field name="name_id"/>
-                     <field name="product_id"/>
+                    <field name="product_id"/>
                 </form>
             </field>
         </record>
@@ -51,7 +51,7 @@
                 <list string="Product Customer Code">
                     <field name="product_code"/>
                     <field name="name_id"/>
-                     <field name="product_id"/>
+                    <field name="product_id"/>
                 </list>
             </field>
         </record>
@@ -65,7 +65,7 @@
             <field name="context">{'visible_product_tmpl_id':False}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                   Customer Code 
+                    Customer Code
                 </p>
             </field>
         </record>

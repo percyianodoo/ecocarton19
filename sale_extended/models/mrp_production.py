@@ -33,28 +33,36 @@ class MrpProduction(models.Model):
                                 vals.get('company_id', self.env.company.id))
                             vals['picking_type_id'] = picking_type_id
                         vals['name'] = self.env['stock.picking.type'].browse(picking_type_id).sequence_id.next_by_id()
-                        vals['bom_id'] = self.env.context.get('bom_id')
+                        # vals['bom_id'] = self.env.context.get('bom_id')
                         if self.env.context.get('selected_so_line_id'):
                             mo_calculations_id = self.env['mo.calculation'].search([('sale_line_id.id','=',self.env.context.get('selected_so_line_id'))],limit=1)
                             if mo_calculations_id:
                                 vals['product_qty'] = mo_calculations_id.x_studio_wastage_calculation
         return super().create(vals_list)
 
+
     def _update_raw_moves(self, factor):
         self.ensure_one()
-        update_info = []
         number_pattern = r"-?\d+(?:\.\d+)?"
+        update_info = []
         for move in self.move_raw_ids.filtered(lambda m: m.state not in ('done', 'cancel')):
             old_qty = move.product_uom_qty
-            new_qty = float_round(old_qty * factor, precision_rounding=move.product_uom.rounding, rounding_method='UP')
-            if move.bom_line_id.quantity_formula:
-                res = re.findall(number_pattern, move.bom_line_id.quantity_formula)
-                if len(res) >= 1:
+            new_qty = move.product_uom.round(old_qty * factor, rounding_method='UP')
+            if (
+                move.bom_line_id
+                and move.bom_line_id.quantity_formula
+            ):
+                res = re.findall(
+                    number_pattern,
+                    move.bom_line_id.quantity_formula
+                )
+                if res:
                     new_qty = float(res[0])
-                    # components.with_context(bypass_procurement_creation=True,
-                    #                         no_procurement=True).product_uom_qty = new_qty
+
             if new_qty > 0:
                 # procurement and assigning is now run in write
                 move.write({'product_uom_qty': new_qty})
                 update_info.append((move, old_qty, new_qty))
+            if move.reference_ids != self.reference_ids:
+                move.reference_ids = self.reference_ids.ids
         return update_info

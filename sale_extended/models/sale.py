@@ -28,9 +28,11 @@ def _action_confirm(self):
 
             context_without_selection = dict(self.env.context)
             context_without_selection.pop('selected_so_line_id', None)
-            self.env.context = context_without_selection
+            # self.env.context = context_without_selection
 
-            return original_action_confirm(self)
+            return original_action_confirm(
+                self.with_context(context_without_selection)
+            )
 
     # Default behavior - process all lines
     return original_action_confirm(self)
@@ -100,37 +102,30 @@ class SaleOrder(models.Model):
                     })
                     order.mo_calc_ids = mo_cal_ids
 
-    # procurement_group_id.stock_move_ids.created_production_id.procurement_group_id !TODO curency commented gettings errors ya
-    @api.depends('mrp_production_ids')
+    @api.depends('stock_reference_ids.production_ids')
     def _compute_mrp_production_ids(self):
-        super()._compute_mrp_production_ids()  # Call Odoo's original logic first
+        super()._compute_mrp_production_ids()
 
         for sale in self:
             root_mos = sale.mrp_production_ids
-            all_mos = self.env['mrp.production'].browse()
+
+            all_mos = self.env['mrp.production']
             to_visit = root_mos
 
             while to_visit:
-                next_mos = self.env['mrp.production'].browse()
-                for mo in to_visit:
-                    if mo in all_mos:
-                        continue
-                    all_mos |= mo
+                current = to_visit - all_mos
 
-                    # Recursively find child MOs
-                    procurement_moves = mo.procurement_group_id.stock_move_ids
-                    child_moves = procurement_moves.move_orig_ids
-                    child_mos = (
-                            (
-                                    procurement_moves | child_moves).created_production_id.procurement_group_id.mrp_production_ids
-                            | child_moves.production_id
-                    ).filtered(lambda m: m not in all_mos)
+                if not current:
+                    break
 
-                    next_mos |= child_mos
+                all_mos |= current
 
-                to_visit = next_mos
+                child_mos = current.mapped(
+                    'production_group_id.child_ids.production_ids'
+                )
 
-            # Update with all collected MOs (including root + recursive)
+                to_visit = child_mos - all_mos
+
             sale.mrp_production_ids = all_mos
             sale.mrp_production_count = len(all_mos)
 
@@ -143,13 +138,12 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
-    # 'product_uom' !TODO currently commenteds ya gettinges errors ya
-    @api.depends('is_storable', 'product_uom_qty', 'qty_delivered', 'state', 'move_ids')
+    @api.depends('is_storable', 'product_uom_qty', 'qty_delivered', 'state', 'move_ids', 'product_uom_id')
     def _compute_qty_to_deliver(self):
         """Compute the visibility of the inventory widget."""
         for line in self:
             line.qty_to_deliver = line.product_uom_qty - line.qty_delivered
-            if line.state in ('draft', 'sent', 'sale','confirmed') and line.is_storable and line.product_uom and line.qty_to_deliver > 0:
+            if line.state in ('draft', 'sent', 'sale','confirmed') and line.is_storable and line.product_uom_id and line.qty_to_deliver > 0:
                 if line.state == 'sale' and not line.move_ids:
                     line.display_qty_widget = False
                 else:

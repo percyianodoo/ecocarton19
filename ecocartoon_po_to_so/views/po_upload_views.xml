@@ -13,6 +13,7 @@
                 <field name="is_proceed"/>
                 <field name="attachment_ids" widget="many2many_binary"/>
                 <field name="sale_order_id"/>
+                <field name="remark"/>
             </list>
         </field>
     </record>
@@ -33,6 +34,7 @@
                             <field name="create_date" readonly="1"/>
                             <field name="is_proceed"/>
                             <field name="sale_order_id" readonly="1"/>
+                            <field name="remark"/>
                         </group>
                     </group>
                     <notebook>

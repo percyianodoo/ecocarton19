@@ -2,6 +2,7 @@
 #  License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import models, api
+from odoo.fields import Domain
 
 
 class MRPProduction(models.Model):
@@ -34,35 +35,40 @@ class MRPProduction(models.Model):
                 values["product_uom_qty"] = computed_quantity
         return values
 
-
     @api.depends('state')
     def _compute_picking_ids(self):
-        grouped_stock_pickings = self.env['stock.picking']._read_group(
-            domain=[('group_id', 'in', self.procurement_group_id.ids), ('group_id', '!=', False)],
-            aggregates=['id:recordset'],
-            groupby=['group_id'],
+        move_per_production_group = self.env['stock.move']._read_group(
+            [('production_group_id', 'in', self.production_group_id.ids)],
+            ['production_group_id'],
+            ['picking_id:recordset'],
         )
-        pickings_per_procurement_group = {
-            group_id.id: picking_ids.sorted() for group_id, picking_ids in grouped_stock_pickings
+
+        move_per_production = {
+            group: pickings
+            for group, pickings in move_per_production_group
         }
+
         for order in self:
-            pickings = pickings_per_procurement_group.get(
-                order.procurement_group_id.id,
+            pickings = move_per_production.get(
+                order.production_group_id,
                 self.env['stock.picking']
             )
-            # custom code to view related picking only before it shows all picking of backorders too.
+
             normal_pickings = pickings.filtered(
                 lambda p: p.picking_type_id.sequence_code != 'SFP'
             )
-            sfp_pickings = pickings.filtered(
-                lambda p:
-                p.picking_type_id.sequence_code == 'SFP'
-                and p.origin == order.name
-            )
-            order.picking_ids = normal_pickings | sfp_pickings
-            # custom code end
 
-            order.picking_ids |= order.move_raw_ids.move_orig_ids.picking_id
+            sfp_pickings = pickings.filtered(
+                lambda p: p.picking_type_id.sequence_code == 'SFP'
+                          and p.origin == order.name
+            )
+
+            order.picking_ids = (
+                    normal_pickings
+                    | sfp_pickings
+                    | order.move_raw_ids.move_orig_ids.picking_id
+            )
+
             order.delivery_count = len(order.picking_ids)
 
 
@@ -74,11 +80,11 @@ class StockMove(models.Model):
 
         # custom code for to stop sfp picking from merging with one picking
         if self.picking_type_id.sequence_code == 'SFP':
-            domain.append((
-                'origin',
-                '=',
-                self.origin
-            ))
+            domain = Domain.AND([
+                domain,
+                Domain('origin', '=', self.origin),
+            ])
+
         return domain
 
 class StockPicking(models.Model):
