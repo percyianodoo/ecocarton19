@@ -20,10 +20,9 @@ class ProductTemplate(models.Model):
 
     secondary_uom = fields.Boolean(index=True, default=False,string='Secondary uom')
     secondary_uom_id = fields.Many2one('uom.uom', 'Secondary UOM')
-    secondary_uom_ids = fields.Many2many('uom.uom',compute='_compute_uom_id')
+    secondary_uom_ids = fields.Many2many('uom.uom', compute='_compute_uom_id')
     secondary_uom_name = fields.Char(string='secondary UOM', related='secondary_uom_id.name', compute='_compute_uom_name',readonly=True)
     secondary_product_qty = fields.Float(string='Qty Available',compute='_compute_secondary_quantities', search='_search_secondary_qty_available')
-
 
     @api.depends('secondary_uom_name')
     def _compute_uom_name(self):
@@ -32,7 +31,7 @@ class ProductTemplate(models.Model):
     @api.depends('uom_id') 
     def _compute_uom_id(self):    
         if self.uom_id:
-            self.secondary_uom_ids = self.uom_id.category_id.uom_ids or False
+            self.secondary_uom_ids = self.uom_id.ids or False
     
 
     @api.depends(
@@ -45,8 +44,7 @@ class ProductTemplate(models.Model):
         res = self._compute_secondary_quantities_dict()
         for template in self:
             template.secondary_product_qty = res[template.id]['secondary_product_qty']
-            template.update({'secondary_product_qty' : res[template.id]['secondary_product_qty']})
-
+            template.update({'secondary_product_qty': res[template.id]['secondary_product_qty']})
 
     def _is_cost_method_standard(self):
         return True
@@ -70,7 +68,6 @@ class ProductTemplate(models.Model):
         product_variant_query = self.env['product.product']._search(domain)
         return [('product_variant_ids', 'in', product_variant_query)]
 
-
     def action_secondary_open_quants(self):
         return self.with_context(active_test=False).product_variant_ids.filtered(lambda p: p.active or p.secondary_product_qty != 0).action_secondary_open_quants()
 
@@ -78,7 +75,7 @@ class ProductTemplate(models.Model):
 class Product(models.Model):
     _inherit = 'product.product'
 
-    secondary_product_qty = fields.Float(string='Qty Available',compute='_compute_secondary_quantities', search='_search_secondary_qty_available')
+    secondary_product_qty = fields.Float(string='Qty Available', compute='_compute_secondary_quantities', search='_search_secondary_qty_available')
 
     @api.depends('stock_move_ids.product_qty', 'stock_move_ids.state')
     @api.depends_context(
@@ -87,7 +84,7 @@ class Product(models.Model):
     )
     def _compute_secondary_quantities(self):
         products = self.filtered(lambda p: p.type != 'service')
-        res = products._compute_quantities_dict(self._context.get('lot_id'), self._context.get('owner_id'), self._context.get('package_id'), self._context.get('from_date'), self._context.get('to_date'))
+        res = products._compute_quantities_dict(self.env.context.get('lot_id'), self.env.context.get('owner_id'), self.env.context.get('package_id'), self.env.context.get('from_date'), self.env.context.get('to_date'))
         for product in products:
             product.secondary_product_qty = res[product.id]['secondary_product_qty']
         services = self - products
@@ -125,7 +122,6 @@ class Product(models.Model):
                 ids.append(product.id)
         return [('id', 'in', ids)]
 
-
     def _search_qty_available_new(self, operator, value, lot_id=False, owner_id=False, package_id=False):
         ''' Optimized method which doesn't search on stock.moves, only on stock.quants. '''
         product_ids = set()
@@ -136,12 +132,11 @@ class Product(models.Model):
             domain_quant.append(('owner_id', '=', owner_id))
         if package_id:
             domain_quant.append(('package_id', '=', package_id))
-        quants_groupby = self.env['stock.quant'].read_group(domain_quant, ['product_id', 'quantity','secondary_quantity'], ['product_id'])
+        quants_groupby = self.env['stock.quant'].read_group(domain_quant, ['product_id', 'quantity', 'secondary_quantity'], ['product_id'])
         for quant in quants_groupby:
             if OPERATORS[operator](quant['quantity'], value):
                 product_ids.add(quant['product_id'][0])
         return list(product_ids)
-
 
     def _compute_quantities_dict(self, lot_id, owner_id, package_id, from_date=False, to_date=False):
         domain_quant_loc, domain_move_in_loc, domain_move_out_loc = self._get_domain_locations()
@@ -251,4 +246,3 @@ class Product(models.Model):
         action['domain'] = domain
         action["name"] = _('Update Quantity')
         return action
-

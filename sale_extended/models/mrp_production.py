@@ -33,7 +33,7 @@ class MrpProduction(models.Model):
                                 vals.get('company_id', self.env.company.id))
                             vals['picking_type_id'] = picking_type_id
                         vals['name'] = self.env['stock.picking.type'].browse(picking_type_id).sequence_id.next_by_id()
-                        # vals['bom_id'] = self.env.context.get('bom_id')
+                        vals['bom_id'] = self.env.context.get('bom_id')
                         if self.env.context.get('selected_so_line_id'):
                             mo_calculations_id = self.env['mo.calculation'].search([('sale_line_id.id','=',self.env.context.get('selected_so_line_id'))],limit=1)
                             if mo_calculations_id:

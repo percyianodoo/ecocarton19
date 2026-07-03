@@ -10,7 +10,7 @@ class StockMove(models.Model):
 
 	secondary_uom_id = fields.Many2one('uom.uom', compute='_quantity_secondary_compute', string="Secondary UOM", store=True)
 	secondary_quantity = fields.Float('Secondary Qty', compute='_quantity_secondary_compute', digits='Product Unit of Measure', store=True)
-	secondary_done_qty = fields.Float('Secondary Quantity Done', compute='_quantity_secondary_done_compute', digits='Product Unit of Measure', inverse='_quantity_secondary_done_set')
+	secondary_done_qty = fields.Float('Secondary Quantity Done', compute='_quantity_secondary_done_compute', digits='Product Unit of Measure', inverse='_quantity_secondary_done_set', store=True)
  
 	@api.depends('product_id', 'product_uom_qty','secondary_uom_id')
 	def _quantity_secondary_compute(self):
@@ -28,11 +28,16 @@ class StockMove(models.Model):
 				quantity = 0
 				if move.move_line_ids:
 					for move_line in move.move_line_ids:
-						if move_line.product_uom_id.category_id and move.secondary_uom_id.category_id:
-							if move_line.product_uom_id.category_id == move.secondary_uom_id.category_id:
+						if move_line.product_uom_id and move.secondary_uom_id:
+							if move_line.product_uom_id == move.secondary_uom_id:
 								quantity += move_line.product_uom_id._compute_quantity(
 									move_line.quantity, move.secondary_uom_id, round=False)
 					move.secondary_done_qty = quantity
+				if move.product_id.secondary_uom and move.product_uom:
+					secondary_qty = move.product_uom._compute_quantity(move.quantity, move.secondary_uom_id)
+					move.update({
+						'secondary_done_qty': secondary_qty,
+					})
 		else:
 			# compute
 			move_lines = self.env['stock.move.line']
@@ -52,7 +57,7 @@ class StockMove(models.Model):
 			for move in self:
 				uom = move.secondary_uom_id
 				if uom:
-					if move.product_id.uom_id.category_id == uom.category_id:
+					if move.product_id.uom_id == uom:
 						move.secondary_done_qty = sum(
 							self.env['uom.uom'].browse(line_uom_id)._compute_quantity(qty, uom, round=False)
 							for line_uom_id, qty in rec.get(move.ids[0] if move.ids else move.id, [])
@@ -105,16 +110,15 @@ class StockMoveLine(models.Model):
 	secondary_quantity = fields.Float("Secondary Qty", digits='Product Unit of Measure' ,compute="_compute_secondary_qty" ,store=True)
 	secondary_done_qty = fields.Float("Secondary Done Qty", digits='Product Unit of Measure')
 
-
-	@api.depends('product_id','product_id.uom_id','quantity','quantity','product_id.secondary_uom_id')
+	@api.depends('product_id', 'product_id.uom_id','quantity','quantity','product_id.secondary_uom_id')
 	def _compute_secondary_qty(self):
 		for move_line in self:
 			if move_line.product_id.secondary_uom:
-				move_line.update({'secondary_uom_id' : move_line.product_id.secondary_uom_id})
+				move_line.update({'secondary_uom_id': move_line.product_id.secondary_uom_id})
 				uom_quantity = move_line.product_id.uom_id._compute_quantity(move_line.quantity or move_line.quantity, move_line.product_id.secondary_uom_id, rounding_method='HALF-UP')
-				move_line.update({'secondary_quantity' : uom_quantity})
+				move_line.update({'secondary_quantity': uom_quantity})
 				uom_done_quantity = move_line.product_id.uom_id._compute_quantity(move_line.quantity, move_line.product_id.secondary_uom_id, rounding_method='HALF-UP')
-				move_line.update({'secondary_done_qty' : uom_done_quantity})
+				move_line.update({'secondary_done_qty': uom_done_quantity})
 
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4::

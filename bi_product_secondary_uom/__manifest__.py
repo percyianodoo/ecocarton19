@@ -11,7 +11,7 @@
     
     """,
     'author': 'BROWSEINFO',
-    'website': 'https://www.browseinfo.com/demo-request?app=bi_product_secondary_uom&version=18&edition=Community',
+    'website': 'https://www.browseinfo.com/demo-request?app=bi_product_secondary_uom&version=19&edition=Community',
     'depends': ['base','sale_management','stock','purchase'],
     'data': [
         'security/ir.model.access.csv',
@@ -24,7 +24,7 @@
     'license':'OPL-1',
     'installable': True,
     'auto_install': False,
-    'live_test_url':'https://www.browseinfo.com/demo-request?app=bi_product_secondary_uom&version=18&edition=Community',
+    'live_test_url':'https://www.browseinfo.com/demo-request?app=bi_product_secondary_uom&version=19&edition=Community',
     "images":['static/description/Banner.gif'],
 }
 

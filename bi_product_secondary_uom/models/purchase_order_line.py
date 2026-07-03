@@ -14,8 +14,8 @@ class PurchaseOrderLine(models.Model):
         for order in self:
             if order.product_id.secondary_uom:
                 uom_quantity = order.product_id.uom_id._compute_quantity(order.product_uom_qty, order.product_id.secondary_uom_id, rounding_method='HALF-UP')
-                order.update({'secondary_uom_id' : order.product_id.secondary_uom_id})
-                order.update({'secondary_quantity' : uom_quantity})
+                order.update({'secondary_uom_id': order.product_id.secondary_uom_id})
+                order.update({'secondary_quantity': uom_quantity})
 
     def _prepare_stock_moves(self, picking):
         res = super(PurchaseOrderLine, self)._prepare_stock_moves(picking)
