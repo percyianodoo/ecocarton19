@@ -80,6 +80,7 @@ class MoCalculation(models.Model):
         context.update({
             'selected_so_line_id': self.sale_line_id.id,
             'bom_id': self.bom_id.id,
+            'from_generate_mo_button': True,
         })
 
         sale = self.sale_id.with_context(context)
