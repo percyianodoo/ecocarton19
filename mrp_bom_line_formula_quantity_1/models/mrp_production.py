@@ -9,12 +9,12 @@ class MRPProduction(models.Model):
     _inherit = "mrp.production"
 
     def _get_move_raw_values(
-        self,
-        product,
-        product_uom_qty,
-        product_uom,
-        operation_id=False,
-        bom_line=False,
+            self,
+            product,
+            product_uom_qty,
+            product_uom,
+            operation_id=False,
+            bom_line=False,
     ):
         values = super()._get_move_raw_values(
             product,
@@ -86,6 +86,7 @@ class StockMove(models.Model):
             ])
 
         return domain
+
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'

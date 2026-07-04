@@ -11,18 +11,18 @@ class MRPBomLine(models.Model):
 
     quantity_formula = fields.Text(
         help="Formula to be evaluated "
-        "when generating the quantity "
-        "for a production order line.\n"
-        "The following values are available:\n"
-        "- bom_line: the current BoM line,\n"
-        "- operation: the operation where the components are"
-        "consumed for current BoM line,\n"
-        "- product: the Product of current BoM line,\n"
-        "- product_uom: the UoM of the Product of current BoM line,\n"
-        "- product_uom_qty: the quantity of the production order line,\n"
-        "- production: the production order being created,\n"
-        "The computed quantity "
-        "must be assigned to the `quantity` variable.",
+             "when generating the quantity "
+             "for a production order line.\n"
+             "The following values are available:\n"
+             "- bom_line: the current BoM line,\n"
+             "- operation: the operation where the components are"
+             "consumed for current BoM line,\n"
+             "- product: the Product of current BoM line,\n"
+             "- product_uom: the UoM of the Product of current BoM line,\n"
+             "- product_uom_qty: the quantity of the production order line,\n"
+             "- production: the production order being created,\n"
+             "The computed quantity "
+             "must be assigned to the `quantity` variable.",
     )
 
     @api.constrains(
@@ -40,12 +40,12 @@ class MRPBomLine(models.Model):
                     raise ValidationError(error_message)
 
     def _quantity_formula_values(
-        self,
-        product,
-        product_uom,
-        product_uom_qty,
-        production,
-        operation_id=False,
+            self,
+            product,
+            product_uom,
+            product_uom_qty,
+            production,
+            operation_id=False,
     ):
         self.ensure_one()
         return {
@@ -58,12 +58,12 @@ class MRPBomLine(models.Model):
         }
 
     def _eval_quantity_formula(
-        self,
-        product,
-        product_uom,
-        product_uom_qty,
-        production,
-        operation_id=False,
+            self,
+            product,
+            product_uom,
+            product_uom_qty,
+            production,
+            operation_id=False,
     ):
         self.ensure_one()
         formula = self.quantity_formula
