@@ -7,13 +7,13 @@
     <record id="mrp_bom_form_view" model="ir.ui.view">
         <field name="name">Add compute quantity fields to BoM form view</field>
         <field name="model">mrp.bom</field>
-        <field name="inherit_id" ref="mrp.mrp_bom_form_view" />
+        <field name="inherit_id" ref="mrp.mrp_bom_form_view"/>
         <field name="arch" type="xml">
             <xpath
-                expr="//field[@name='bom_line_ids']/list/field[@name='product_qty']"
-                position="after"
+                    expr="//field[@name='bom_line_ids']/list/field[@name='product_qty']"
+                    position="after"
             >
-                <field name="quantity_formula" />
+                <field name="quantity_formula"/>
             </xpath>
         </field>
     </record>

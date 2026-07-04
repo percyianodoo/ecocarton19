@@ -2,20 +2,20 @@
 
 <odoo>
 
-<!--    <record id="view_mrp_routing_workcenter_bom_tree_view_inherit"-->
-<!--            model="ir.ui.view">-->
-<!--        <field name="name">mrp.routing.workcenter.bom.tree.inherit</field>-->
-<!--        <field name="model">mrp.routing.workcenter</field>-->
-<!--        <field name="inherit_id" ref="mrp.mrp_routing_workcenter_bom_tree_view"/>-->
-<!--        <field name="arch" type="xml">-->
+    <!--    <record id="view_mrp_routing_workcenter_bom_tree_view_inherit"-->
+    <!--            model="ir.ui.view">-->
+    <!--        <field name="name">mrp.routing.workcenter.bom.tree.inherit</field>-->
+    <!--        <field name="model">mrp.routing.workcenter</field>-->
+    <!--        <field name="inherit_id" ref="mrp.mrp_routing_workcenter_bom_tree_view"/>-->
+    <!--        <field name="arch" type="xml">-->
 
-<!--            <xpath expr="//field[@name='time_cycle']" position="after">-->
-<!--                <field name="pieces_per_cycle"-->
-<!--                       string="Pieces Produced"/>-->
-<!--            </xpath>-->
+    <!--            <xpath expr="//field[@name='time_cycle']" position="after">-->
+    <!--                <field name="pieces_per_cycle"-->
+    <!--                       string="Pieces Produced"/>-->
+    <!--            </xpath>-->
 
-<!--        </field>-->
-<!--    </record>-->
+    <!--        </field>-->
+    <!--    </record>-->
 
     <record id="custom_mrp_routing_workcenter_form_view" model="ir.ui.view">
 
