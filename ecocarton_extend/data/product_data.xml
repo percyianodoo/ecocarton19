@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="product_dummy_product_selection" model="product.product">
+            <field name="name">Dummy Products Selections</field>
+            <field name="standard_price">1</field>
+            <field name="list_price">1</field>
+            <field name="description">Dummy Products Selections.</field>
+        </record>
+    </data>
+</odoo>

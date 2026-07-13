@@ -38,3 +38,24 @@ class MrpProduction(models.Model):
             'view_mode': 'list,form',
             'domain': [('id', 'in', self.transfer_picking_ids.ids)],
         }
+
+    def _get_move_raw_values(
+        self,
+        product,
+        product_uom_qty,
+        product_uom,
+        operation_id=False,
+        bom_line=False,
+    ):
+        vals = super()._get_move_raw_values(
+            product,
+            product_uom_qty,
+            product_uom,
+            operation_id=operation_id,
+            bom_line=bom_line,
+        )
+
+        if bom_line:
+            vals["custom_product_category_id"] = bom_line.custom_product_category_id.id
+
+        return vals

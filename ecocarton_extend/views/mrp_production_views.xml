@@ -29,6 +29,23 @@
 
             </xpath>
 
+            <xpath expr="//field[@name='move_raw_ids']/list/field[@name='product_id']"
+                   position="after">
+                <field name="custom_product_category_id"/>
+            </xpath>
+
+            <xpath expr="//field[@name='move_raw_ids']/list/field[@name='product_id']"
+                   position="attributes">
+
+                <attribute name="context">
+                    {
+                        'default_is_storable': True,
+                        'component_category_id': custom_product_category_id
+                    }
+                </attribute>
+
+            </xpath>
+
         </field>
 
     </record>
